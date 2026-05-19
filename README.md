@@ -26,7 +26,7 @@ npm run verify
 Create a consumer project:
 
 ```bash
-npx create-profile-scribe-harness my-profile-scribe-workspace
+npm exec --package @agent-pattern-labs/profile-scribe-agent-harness -- create-profile-scribe-harness my-profile-scribe-workspace
 cd my-profile-scribe-workspace
 npm install
 ```
@@ -43,6 +43,23 @@ npm run smoke:config
 npm run sync
 node bin/profile-scribe-harness.mjs help
 ```
+
+## Publishing
+
+The npm package is published as
+`@agent-pattern-labs/profile-scribe-agent-harness` with public scoped access.
+The GitHub Actions publish workflow expects `NPM_TOKEN` to be available to the
+repo or organization.
+
+Create a GitHub release with the GitHub CLI to publish the matching package
+version to the Agent Pattern Labs npm org:
+
+```bash
+gh release create v0.1.0 --title v0.1.0 --generate-notes
+```
+
+The release must be published, not left as a draft. The workflow also supports
+manual `workflow_dispatch` runs from GitHub Actions.
 
 The original development machine used `/Users/charlie/Razroo/profile-scribe` as
 the Profile Scribe checkout. That path is intentionally not hard-coded. Use

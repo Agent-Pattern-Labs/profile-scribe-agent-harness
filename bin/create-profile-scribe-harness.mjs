@@ -17,11 +17,11 @@ if (help || positional.length === 0) {
   console.log(`create-profile-scribe-harness
 
 Usage:
-  npx create-profile-scribe-harness <dir> [--force]
+  npm exec --package @agent-pattern-labs/profile-scribe-agent-harness -- create-profile-scribe-harness <dir> [--force]
 
 Examples:
-  npx create-profile-scribe-harness my-post-workspace
-  npx create-profile-scribe-harness . --force
+  npm exec --package @agent-pattern-labs/profile-scribe-agent-harness -- create-profile-scribe-harness my-post-workspace
+  npm exec --package @agent-pattern-labs/profile-scribe-agent-harness -- create-profile-scribe-harness . --force
 
 After scaffolding:
   cd <dir>
