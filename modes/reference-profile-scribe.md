@@ -5,18 +5,51 @@ integration, or submission details are blocking the active mode.
 
 ## Supported Integration Shapes
 
-The harness should support both integration styles:
+The harness should support these integration styles, in priority order:
 
-1. Local checkout
+1. ProfileScribe MCP bridge
+   - command: `profilescribe-mcp`
+   - public repo: `github.com/razroo/profilescribe-mcp`
+   - local reference repo: `/Users/charlie/AgentPatternLabs/profilescribe-mcp`
+   - configured by `PROFILESCRIBE_AGENT_TOKEN` and `PROFILESCRIBE_MCP_URL`
+   - default hosted endpoint: `https://profilescribe.com/api/mcp`
+
+2. Local checkout
    - configured by `PROFILE_SCRIBE_ROOT` or `config.profileScribe.root`
    - used for local data access, scripts, or database adapters
    - must not assume a personal path
 
-2. API
+3. API
    - configured by `PROFILE_SCRIBE_API_URL`
    - authenticated through the environment variable named by
      `config.profileScribe.apiTokenEnv`
    - used for post retrieval and draft submission
+
+## MCP Setup
+
+Install the bridge:
+
+```bash
+go install github.com/razroo/profilescribe-mcp/cmd/profilescribe-mcp@latest
+```
+
+Create a scoped token from ProfileScribe's `/agents` page and export it:
+
+```bash
+export PROFILESCRIBE_AGENT_TOKEN=psagt_...
+export PROFILESCRIBE_MCP_URL=https://profilescribe.com/api/mcp
+```
+
+Minimum useful scopes for this harness:
+
+- `mcp:tools`
+- `read:profile`
+- `read:sources`
+- `observe:sources`
+- `write:drafts`
+
+Add `read:timeline` and `interact:timeline` only when the workflow will search,
+like, or comment on adjacent timeline posts.
 
 ## Required Capabilities
 
@@ -28,6 +61,18 @@ Before implementing a Profile Scribe adapter, identify how to:
 - update a draft post
 - publish only when explicitly requested
 - return a stable receipt or URL
+
+## Posting Tool Choice
+
+- Use `create_first_post_from_sources` only to bootstrap the profile's first
+  source-backed timeline post.
+- Use `create_source_backed_timeline_post` for normal follow-up posts grounded
+  in approved ProfileScribe sources.
+- Use raw `create_timeline_draft` only when the runtime already provides a
+  valid ActionProof envelope or `PROFILESCRIBE_ACTIONPROOF_COMMAND` is
+  configured in a protected runtime.
+- Do not use any posting tool for generic crawl summaries, source-change spam,
+  repeated angles, or inflated claims.
 
 ## Missing Integration Behavior
 

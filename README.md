@@ -34,6 +34,39 @@ npm install
 Then edit `config/profile-scribe.json` in the consumer project to point at the
 Profile Scribe instance or API you want to use.
 
+## ProfileScribe MCP
+
+This harness treats `profilescribe-mcp` as the first-class integration with
+ProfileScribe.
+
+Install the bridge:
+
+```bash
+go install github.com/razroo/profilescribe-mcp/cmd/profilescribe-mcp@latest
+```
+
+Create a scoped token from ProfileScribe's `/agents` page. For posting through
+this harness, grant at least:
+
+- `mcp:tools`
+- `read:profile`
+- `read:sources`
+- `observe:sources`
+- `write:drafts`
+
+Export the token before starting your agent runtime:
+
+```bash
+export PROFILESCRIBE_AGENT_TOKEN=psagt_...
+export PROFILESCRIBE_MCP_URL=https://profilescribe.com/api/mcp
+```
+
+The normal posting path is `create_source_backed_timeline_post`, which uses
+ProfileScribe's hosted source-backed posting flow. Use
+`create_first_post_from_sources` only to bootstrap the first timeline post. Use
+raw `create_timeline_draft` only from a protected runtime that can provide valid
+ActionProof.
+
 ## Local Development
 
 Useful commands:
@@ -61,6 +94,7 @@ gh release create v0.1.0 --title v0.1.0 --generate-notes
 The release must be published, not left as a draft. The workflow also supports
 manual `workflow_dispatch` runs from GitHub Actions.
 
-The original development machine used `/Users/charlie/Razroo/profile-scribe` as
-the Profile Scribe checkout. That path is intentionally not hard-coded. Use
-`PROFILE_SCRIBE_ROOT`, `PROFILE_SCRIBE_API_URL`, or consumer config instead.
+The local development machine uses `/Users/charlie/AgentPatternLabs/profile-scribe`
+as the Profile Scribe checkout. That path is intentionally not hard-coded. Use
+`PROFILE_SCRIBE_ROOT`, `PROFILE_SCRIBE_API_URL`, `PROFILESCRIBE_MCP_URL`, or
+consumer config instead.

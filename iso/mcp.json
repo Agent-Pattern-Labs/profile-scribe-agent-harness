@@ -1,5 +1,11 @@
 {
   "servers": {
+    "profilescribe": {
+      "command": "profilescribe-mcp",
+      "env": {
+        "PROFILESCRIBE_MCP_URL": "https://profilescribe.com/api/mcp"
+      }
+    },
     "geometra": {
       "command": "npx",
       "args": ["-y", "@geometra/mcp@1.61.3"]

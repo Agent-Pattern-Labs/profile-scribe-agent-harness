@@ -11,6 +11,7 @@ The harness package owns reusable behavior:
 - workflow procedures in `modes/`
 - policy and contracts in `templates/`
 - CLIs and sync behavior in `bin/`
+- the first-class ProfileScribe MCP integration contract
 
 Consumer projects own private runtime data:
 
@@ -19,6 +20,7 @@ Consumer projects own private runtime data:
 - prior posts
 - generated drafts
 - submission receipts
+- `PROFILESCRIBE_AGENT_TOKEN` and any local MCP client config
 
 ## Workflow
 
@@ -32,6 +34,7 @@ Consumer projects own private runtime data:
 
 ## Integration Boundary
 
-Profile Scribe can be reached through a local checkout or an API. The harness
-should discover integration settings from consumer config and environment
-variables, never from a personal path.
+Profile Scribe should be reached through `profilescribe-mcp` by default. The
+bridge forwards terminal-agent MCP calls to the hosted ProfileScribe MCP
+endpoint and keeps scoped token enforcement in ProfileScribe. REST and local
+checkout adapters are fallback paths for development or future integrations.

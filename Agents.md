@@ -1,6 +1,6 @@
 # Profile Scribe Agent Harness Directives
 
-This repository is an open-source agentic harness that runs as a layer on top of Profile Scribe. In the original local development environment, Profile Scribe lives at `/Users/charlie/Razroo/profile-scribe`; for public use, treat that path as a configurable integration target rather than a hard-coded dependency.
+This repository is an open-source agentic harness that runs as a layer on top of Profile Scribe. In the current local development environment, Profile Scribe lives at `/Users/charlie/AgentPatternLabs/profile-scribe`; for public use, treat that path as a configurable integration target rather than a hard-coded dependency.
 
 ## Construction Pattern
 
@@ -12,6 +12,16 @@ Use `/Users/charlie/AgentPatternLabs/Agent-Skills` as the local reference for ho
 - `bin/` owns user-facing CLI entry points, scaffolding, and sync behavior.
 - consumer projects own private data, local config, drafts, crawl results, prior posts, and generated outputs.
 - the harness package must stay portable and must not contain user-private Profile Scribe data.
+
+## First-Class ProfileScribe Bridge
+
+Use `/Users/charlie/AgentPatternLabs/profilescribe-mcp` as the local reference for the public ProfileScribe MCP bridge. The harness should treat `profilescribe-mcp` as the default way for terminal agents to read ProfileScribe profile/sources and submit source-backed timeline posts. Use `/Users/charlie/AgentPatternLabs/profile-scribe` as the local reference for hosted API behavior, tool semantics, ActionProof requirements, and product rules.
+
+Do not reimplement ProfileScribe tool behavior inside this harness. Keep the split clear:
+
+- this harness: orchestration, URL crawling, prior-post search, voice matching, post planning, and policy
+- `profilescribe-mcp`: stdio MCP transport, token forwarding, and terminal client setup
+- `profile-scribe`: hosted API, permissions, source-backed posting, ActionProof verification, and storage
 
 ## Product Mission
 
@@ -39,7 +49,7 @@ The harness helps a user create a fresh Profile Scribe post by doing the researc
 
 - Do not hard-code personal filesystem paths, credentials, account IDs, cookies, or API tokens.
 - Make Profile Scribe location, credentials, crawler settings, and posting behavior configurable through documented environment variables or config files.
-- Keep the harness usable by people who do not have the original `/Users/charlie/Razroo/profile-scribe` checkout path.
+- Keep the harness usable by people who do not have the local `/Users/charlie/AgentPatternLabs/profile-scribe` checkout path.
 - Avoid committing scraped content, private user posts, generated drafts, or local Profile Scribe data.
 - Design integrations so another developer can point the harness at their own Profile Scribe instance with minimal setup.
 

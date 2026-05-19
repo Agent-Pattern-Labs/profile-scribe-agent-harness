@@ -35,7 +35,8 @@ const requiredFiles = [
   'templates/capabilities.json',
   'templates/migrations.json',
   'templates/redact.json',
-  'docs/architecture.md'
+  'docs/architecture.md',
+  'docs/profilescribe-mcp.md'
 ];
 
 const jsonFiles = [

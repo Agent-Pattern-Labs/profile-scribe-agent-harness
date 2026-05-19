@@ -25,6 +25,8 @@ orchestrator delegates to you when the work needs strong writing judgment.
 - Review drafts for repetition, source support, tone drift, and stale claims.
 - Adapt structure and phrasing to the user's real posting history without
   copying prior posts wholesale.
+- Prepare source-backed post topics and tone guidance for ProfileScribe MCP
+  submission tools.
 
 ## Do Not
 

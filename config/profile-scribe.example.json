@@ -2,7 +2,10 @@
   "profileScribe": {
     "root": "",
     "apiUrl": "",
+    "mcpCommand": "profilescribe-mcp",
+    "mcpUrl": "https://profilescribe.com/api/mcp",
     "apiTokenEnv": "PROFILE_SCRIBE_API_TOKEN",
+    "agentTokenEnv": "PROFILESCRIBE_AGENT_TOKEN",
     "submitMode": "draft"
   },
   "crawler": {

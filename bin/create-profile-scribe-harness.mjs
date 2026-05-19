@@ -77,7 +77,10 @@ write('config/profile-scribe.json', `${JSON.stringify({
   profileScribe: {
     root: '',
     apiUrl: '',
+    mcpCommand: 'profilescribe-mcp',
+    mcpUrl: 'https://profilescribe.com/api/mcp',
     apiTokenEnv: 'PROFILE_SCRIBE_API_TOKEN',
+    agentTokenEnv: 'PROFILESCRIBE_AGENT_TOKEN',
     submitMode: 'draft'
   },
   crawler: {
@@ -102,9 +105,14 @@ Personal Profile Scribe harness workspace.
 ## Setup
 
 1. Run \`npm install\`.
-2. Edit \`config/profile-scribe.json\` or set \`PROFILE_SCRIBE_ROOT\` /
+2. Install \`profilescribe-mcp\`:
+   \`go install github.com/razroo/profilescribe-mcp/cmd/profilescribe-mcp@latest\`.
+3. Create a scoped ProfileScribe token from \`/agents\` with \`mcp:tools\`,
+   \`read:profile\`, \`read:sources\`, \`observe:sources\`, and \`write:drafts\`.
+4. Export \`PROFILESCRIBE_AGENT_TOKEN=psagt_...\`.
+5. Edit \`config/profile-scribe.json\` or set \`PROFILE_SCRIBE_ROOT\` /
    \`PROFILE_SCRIBE_API_URL\`.
-3. Put request notes in \`data/request.md\` or invoke the harness from your
+6. Put request notes in \`data/request.md\` or invoke the harness from your
    agent runtime with a topic, draft, and URLs.
 
 Private data, crawled sources, previous posts, generated drafts, and submission

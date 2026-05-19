@@ -46,4 +46,5 @@ Resolve integration settings in this order:
    `PROFILE_SCRIBE_API_URL`, and `PROFILE_SCRIBE_API_TOKEN`
 3. explicit values supplied by the user in the current request
 
-Never assume `/Users/charlie/Razroo/profile-scribe` exists.
+Never assume `/Users/charlie/AgentPatternLabs/profile-scribe` exists outside
+this local development machine.

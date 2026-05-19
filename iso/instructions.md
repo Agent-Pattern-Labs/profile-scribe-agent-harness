@@ -30,6 +30,8 @@ content, and staging the result back into Profile Scribe.
 - Use `modes/history.md` for prior-post search and duplicate checks.
 - Use `modes/voice.md` for voice-profile construction.
 - Use `modes/submit.md` for Profile Scribe draft or publish submission.
+- Treat `profilescribe-mcp` as the first-class ProfileScribe integration for
+  agent runtimes. REST or local-checkout adapters are fallback paths.
 - Delegate procedural extraction, crawling, and submission checks to
   `@general-free` when a runtime supports subagents.
 - Delegate final voice-sensitive drafting or editorial review to
@@ -40,7 +42,7 @@ content, and staging the result back into Profile Scribe.
 
 1. Resolve consumer config from `config/profile-scribe.json`, then environment
    variables. Required integration values depend on whether the consumer uses a
-   local Profile Scribe checkout or an API.
+   local Profile Scribe checkout, REST API, or `profilescribe-mcp`.
 2. Pick and state the active mode from the router.
 3. Load only `modes/_shared.md` plus the active mode file. Load reference files
    only when the active task is blocked by setup or integration details.
@@ -50,6 +52,22 @@ content, and staging the result back into Profile Scribe.
 6. Draft a new post with explicit source and prior-post provenance.
 7. Run duplicate, provenance, privacy, and style checks.
 8. Submit or stage the post back to Profile Scribe according to configuration.
+
+## ProfileScribe MCP
+
+The preferred bridge is `profilescribe-mcp` from
+`github.com/razroo/profilescribe-mcp`. The user must create a scoped token from
+ProfileScribe's `/agents` page and provide it as `PROFILESCRIBE_AGENT_TOKEN`.
+For hosted production, use `PROFILESCRIBE_MCP_URL=https://profilescribe.com/api/mcp`.
+
+Use these tools by default:
+
+- `read_profile` and `read_sources` before drafting.
+- `create_source_backed_timeline_post` for follow-up source-backed posts.
+- `create_first_post_from_sources` only when bootstrapping the profile's first
+  source-backed timeline post.
+- `create_timeline_draft` only when a protected runtime already supplies valid
+  ActionProof, or when `PROFILESCRIBE_ACTIONPROOF_COMMAND` is configured.
 
 ## Output
 

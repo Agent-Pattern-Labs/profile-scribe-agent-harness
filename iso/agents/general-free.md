@@ -24,8 +24,9 @@ procedural work that benefits from bounded tool use and structured outputs.
 - Search prior-post indexes or configured Profile Scribe local data.
 - Normalize source records, URLs, titles, timestamps, and duplicate keys.
 - Validate that a draft has required provenance before submission.
-- Stage drafts through a configured Profile Scribe API or local integration when
-  the orchestrator gives explicit instructions.
+- Call ProfileScribe MCP tools such as `read_profile`, `read_sources`, and
+  `create_source_backed_timeline_post` when the orchestrator gives explicit
+  instructions.
 
 ## Do Not
 
