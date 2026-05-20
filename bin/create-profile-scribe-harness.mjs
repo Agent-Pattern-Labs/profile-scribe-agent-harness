@@ -113,7 +113,9 @@ Personal Profile Scribe harness workspace.
 5. Edit \`config/profile-scribe.json\` or set \`PROFILE_SCRIBE_ROOT\` /
    \`PROFILE_SCRIBE_API_URL\`.
 6. Put request notes in \`data/request.md\` or invoke the harness from your
-   agent runtime with a topic, draft, and URLs.
+   agent runtime with "create a post". URLs are optional; the harness should
+   read ProfileScribe profile data, approved sources, source activity, and prior
+   timeline context before deciding what to publish.
 
 Private data, crawled sources, previous posts, generated drafts, and submission
 records should stay in this consumer project, not in the harness package.

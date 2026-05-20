@@ -4,33 +4,42 @@ Use this mode for the full Profile Scribe post creation workflow.
 
 ## Inputs
 
-- User topic, rough draft, note, or instruction.
-- Any supplied URLs.
+- User topic, rough draft, note, or instruction, if supplied.
+- Any supplied URLs, if supplied.
 - Consumer Profile Scribe config.
-- Prior posts from Profile Scribe or a consumer-local export.
+- ProfileScribe profile, approved sources, source activity, and prior posts from
+  ProfileScribe MCP.
 
 ## Procedure
 
-1. Resolve Profile Scribe configuration. If neither a local root nor API URL is
-   configured, stop with exact setup instructions.
-2. Extract URLs from the request. Route URL collection through `crawl` mode
+1. Resolve ProfileScribe MCP configuration. If `profilescribe-mcp` or
+   `PROFILESCRIBE_AGENT_TOKEN` is missing, stop with exact setup instructions.
+2. Call `read_profile` and `read_sources` before deciding what to post.
+3. If the request includes URLs, route URL collection through `crawl` mode
    behavior and preserve failures.
-3. Search prior posts using `history` mode behavior. Record related posts and
+4. If the request does not include URLs, inspect approved sources and recent
+   source state:
+   - use source checkpoint/observation/fact-candidate tools when available
+   - use timeline search/discovery when available to avoid repeating posts
+   - choose a specific source-backed update or stop with "no post-worthy update"
+5. Search prior posts using `history` mode behavior. Record related posts and
    possible duplicate topics.
-4. Build or refresh the voice profile using `voice` mode behavior.
-5. Draft a new post with:
+6. Build or refresh the voice profile using `voice` mode behavior.
+7. Draft a new post with:
    - one clear point of view
    - source-backed facts
    - the user's observed voice
    - no heavy copying from prior posts
-6. Run checks:
+8. Run checks:
    - all crawled claims have provenance
    - duplicate risk is acceptable or called out
    - voice does not drift into generic assistant prose
    - private tokens, cookies, and raw credentials are absent
-7. Save or return the draft in the consumer project.
-8. If the user asked to submit, continue to `submit` mode. Otherwise leave the
-   post staged for review.
+9. For normal autonomous posting, call `create_source_backed_timeline_post` with
+   the chosen topic/tone/source IDs. Use local draft text as planning context;
+   the hosted ProfileScribe tool owns final source-backed publication.
+10. If no specific, meaningful update exists, do not post. Return the source
+   checks performed and the reason no post was created.
 
 ## Output
 

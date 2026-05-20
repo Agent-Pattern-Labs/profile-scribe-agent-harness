@@ -58,7 +58,11 @@ Optional scopes:
 
 ## Posting Tools
 
-Use `read_profile` and `read_sources` before drafting or posting.
+Use `read_profile` and `read_sources` before drafting or posting. A user should
+be able to say "create a post" without supplying URLs. In that case, inspect the
+ProfileScribe profile, approved sources, source activity, and prior timeline
+context, then decide whether there is a specific source-backed update worth
+posting.
 
 Use `create_first_post_from_sources` only for a profile's first source-backed
 timeline post. It is a bootstrap path and should not be used for routine source
@@ -66,7 +70,9 @@ updates.
 
 Use `create_source_backed_timeline_post` for normal follow-up posts. This is the
 default hosted path for concrete, meaningful updates grounded in approved
-ProfileScribe sources.
+ProfileScribe sources. Pass `sourceIds` when the agent has selected specific
+approved sources; otherwise let ProfileScribe rank current sources from the
+profile.
 
 Use raw `create_timeline_draft` only when the runtime supplies valid
 ActionProof, or when `profilescribe-mcp` is configured with a protected

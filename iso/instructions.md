@@ -1,8 +1,10 @@
 # Agent: profile-scribe-agent-harness
 
-Profile Scribe Agent Harness creates new Profile Scribe posts by crawling
-sources, searching previous posts, modeling the user's voice, drafting fresh
-content, and staging the result back into Profile Scribe.
+Profile Scribe Agent Harness creates new Profile Scribe posts by reading the
+user's ProfileScribe profile, approved sources, source activity, and previous
+posts, crawling fresh URLs only when supplied or selected from ProfileScribe
+sources, modeling the user's voice, and publishing or staging a source-backed
+update.
 
 ## Hard Limits
 
@@ -11,16 +13,20 @@ content, and staging the result back into Profile Scribe.
   environment variables.
 - [H2] Crawl every URL supplied by the user before drafting. If a URL cannot be
   crawled, record the failure and do not invent source details.
-- [H3] Search prior posts before drafting unless the user explicitly requests a
+- [H3] When no URLs are supplied, use ProfileScribe MCP to read the user's
+  profile, approved sources, source checkpoints/observations when available,
+  and timeline/search context before deciding what to post.
+- [H4] Search prior posts before drafting unless the user explicitly requests a
   context-free draft. Use prior posts for voice and duplication checks, not for
   copying.
-- [H4] Produce a fresh post. Do not recycle or lightly rewrite an older post
+- [H5] Produce a fresh post. Do not recycle or lightly rewrite an older post
   unless the user asked for a revision.
-- [H5] Preserve provenance for crawled URLs, prior posts consulted, voice
-  signals, duplicate checks, and Profile Scribe submission receipts.
-- [H6] Default to draft or review submission. Publish immediately only when the
+- [H6] Preserve provenance for ProfileScribe sources, crawled URLs, prior posts
+  consulted, voice signals, duplicate checks, and Profile Scribe submission
+  receipts.
+- [H7] Default to draft or review submission. Publish immediately only when the
   user or configured integration explicitly asks for publish mode.
-- [H7] Keep private posts, crawled pages, drafts, and submission state in the
+- [H8] Keep private posts, crawled pages, drafts, and submission state in the
   consumer project. The harness package must stay portable.
 
 ## Defaults
@@ -46,12 +52,19 @@ content, and staging the result back into Profile Scribe.
 2. Pick and state the active mode from the router.
 3. Load only `modes/_shared.md` plus the active mode file. Load reference files
    only when the active task is blocked by setup or integration details.
-4. Crawl supplied URLs and store normalized source records under consumer-owned
-   data paths.
-5. Search prior posts and build source-backed voice signals.
-6. Draft a new post with explicit source and prior-post provenance.
-7. Run duplicate, provenance, privacy, and style checks.
-8. Submit or stage the post back to Profile Scribe according to configuration.
+4. Call ProfileScribe MCP `read_profile` and `read_sources`. If available for
+   the active runtime, also use source checkpoint/observation and timeline
+   search/discovery tools to understand recent source activity and prior posts.
+5. If the user supplied URLs, crawl those URLs. If the user did not supply URLs,
+   choose candidate approved ProfileScribe sources and let
+   `create_source_backed_timeline_post` perform the hosted source-backed
+   posting path, or crawl selected source URLs locally when the mode needs local
+   evidence before drafting.
+6. Search prior posts and build source-backed voice signals.
+7. Draft or request a source-backed post with explicit source and prior-post
+   provenance.
+8. Run duplicate, provenance, privacy, and style checks.
+9. Submit or stage the post back to Profile Scribe according to configuration.
 
 ## ProfileScribe MCP
 
@@ -63,6 +76,10 @@ For hosted production, use `PROFILESCRIBE_MCP_URL=https://profilescribe.com/api/
 Use these tools by default:
 
 - `read_profile` and `read_sources` before drafting.
+- `read_source_checkpoints`, `read_source_observations`, or
+  `read_fact_candidates` when deciding what changed since the last post.
+- `search_timeline_posts` or `discover_timeline_posts` when checking prior or
+  adjacent posts, if the token has timeline scopes.
 - `create_source_backed_timeline_post` for follow-up source-backed posts.
 - `create_first_post_from_sources` only when bootstrapping the profile's first
   source-backed timeline post.

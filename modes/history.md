@@ -4,17 +4,21 @@ Use this mode to search previous Profile Scribe posts and detect repetition.
 
 ## Procedure
 
-1. Resolve prior-post access through Profile Scribe config.
-2. Retrieve the configured number of recent posts and any posts matching the
-   current topic, URLs, entities, or tags.
-3. Build a compact related-post list with title, date, URL or local ID, topic,
+1. Resolve prior-post access through ProfileScribe MCP first. Use REST or local
+   exports only as fallback paths.
+2. Retrieve or search the user's timeline posts when the MCP/API exposes them.
+   If only global search is available, search for the user's profile terms,
+   source labels, source URLs, entities, and candidate topic.
+3. Retrieve the configured number of recent posts and any posts matching the
+   current topic, URLs, entities, source IDs, or tags.
+4. Build a compact related-post list with title, date, URL or local ID, topic,
    and relevance reason.
-4. Flag duplicate risk:
+5. Flag duplicate risk:
    - same thesis already posted
    - same source already used
    - same anecdote or story shape repeated recently
    - same call to action repeated recently
-5. Pass style-relevant examples to `voice` mode without copying full private
+6. Pass style-relevant examples to `voice` mode without copying full private
    post bodies into prompts when a compact style profile is enough.
 
 ## Output

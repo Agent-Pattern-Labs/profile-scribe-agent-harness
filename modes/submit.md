@@ -14,6 +14,9 @@ Use this mode to stage or publish a reviewed draft in Profile Scribe.
    - first source-backed post: `create_first_post_from_sources`
    - normal follow-up post: `create_source_backed_timeline_post`
    - raw draft: `create_timeline_draft` only with valid ActionProof
+   When the user says "create a post" without URLs, call
+   `create_source_backed_timeline_post` with a concrete topic/tone and optional
+   source IDs selected from `read_sources`; do not require user-supplied URLs.
 5. Fall back to a configured REST API or local integration contract only when
    MCP is unavailable and the adapter exposes the required posting controls.
 6. Store a submission receipt in consumer-local state.

@@ -12,6 +12,9 @@ Use `/Users/charlie/AgentPatternLabs/Agent-Skills` as the local reference for ho
 - `bin/` owns user-facing CLI entry points, scaffolding, and sync behavior.
 - consumer projects own private data, local config, drafts, crawl results, prior posts, and generated outputs.
 - the harness package must stay portable and must not contain user-private Profile Scribe data.
+- a bare "create a post" request should use ProfileScribe MCP to read profile,
+  approved sources, source activity, and prior timeline context before deciding
+  what to publish; user-supplied URLs are optional, not required.
 
 ## First-Class ProfileScribe Bridge
 
