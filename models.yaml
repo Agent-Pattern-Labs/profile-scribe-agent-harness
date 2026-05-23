@@ -1,6 +1,6 @@
 # Profile Scribe Agent Harness model policy.
 #
-# Extends @razroo/iso-route's bundled standard preset. Subagents bind to
+# Extends @agent-pattern-labs/iso-route's bundled standard preset. Subagents bind to
 # these role names through iso/agents/*.md.
 
 extends: standard
