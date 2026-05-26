@@ -9,9 +9,10 @@
   },
   "scripts": {
     "sync": "node bin/sync.mjs",
-    "verify": "npm run smoke:config && npm run smoke:source-ids",
+    "verify": "npm run smoke:config && npm run smoke:source-ids && npm run smoke:topic-guard",
     "smoke:config": "node scripts/smoke-config.mjs",
     "smoke:source-ids": "node scripts/smoke-run-job-source-ids.mjs",
+    "smoke:topic-guard": "node scripts/smoke-run-job-topic-guard.mjs",
     "plan": "iso plan .",
     "build:config": "iso build .",
     "lint:agentmd": "agentmd lint iso/instructions.md",

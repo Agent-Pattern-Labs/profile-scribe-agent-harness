@@ -101,6 +101,10 @@ async function runPostJob(job, options) {
     context,
     numberOr(payload.maxSources, 3)
   );
+  const submissionDraft = {
+    ...draft,
+    topic: resolveTimelinePostTopic(draft, payload)
+  };
   if (!draft.body && !boolEnv('PROFILESCRIBE_RIG_ALLOW_HOSTED_DRAFT_FALLBACK')) {
     return {
       status: 'skipped',
@@ -113,12 +117,12 @@ async function runPostJob(job, options) {
       }
     };
   }
-  const duplicate = await findRecentDuplicateDraft(draft, context);
+  const duplicate = await findRecentDuplicateDraft(submissionDraft, context);
   if (duplicate) {
     return skipped(job, `A recent timeline post already covers this update: ${duplicate.topic || 'untitled post'}`, {
       duplicatePost: duplicate,
-      topic: draft.topic || payload.topic || '',
-      sourceIds: array(draft.sourceIds),
+      topic: submissionDraft.topic,
+      sourceIds: array(submissionDraft.sourceIds),
       checkedSources: context.sources.length
     });
   }
@@ -126,18 +130,18 @@ async function runPostJob(job, options) {
   let response;
   try {
     response = await callMCPTool('create_source_backed_timeline_post', compact({
-      topic: draft.topic || payload.topic || '',
-      body: draft.body || '',
-      abstracts: array(draft.abstracts),
-      tone: draft.tone || payload.tone || 'professional',
+      topic: submissionDraft.topic,
+      body: submissionDraft.body || '',
+      abstracts: array(submissionDraft.abstracts),
+      tone: submissionDraft.tone || payload.tone || 'professional',
       maxSources: numberOr(payload.maxSources, 3),
-      sourceIds: array(draft.sourceIds)
+      sourceIds: array(submissionDraft.sourceIds)
     }));
   } catch (error) {
     if (isDuplicateTimelinePostError(error)) {
       return skipped(job, 'A recent timeline post already covers this source-backed update.', {
-        topic: draft.topic || payload.topic || '',
-        sourceIds: array(draft.sourceIds),
+        topic: submissionDraft.topic,
+        sourceIds: array(submissionDraft.sourceIds),
         checkedSources: context.sources.length
       });
     }
@@ -152,8 +156,8 @@ async function runPostJob(job, options) {
     artifactType: 'timeline_post',
     artifactId: response?.draft?.id || response?.id || '',
     metadata: {
-      topic: draft.topic || payload.topic || '',
-      sourceIds: array(draft.sourceIds),
+      topic: submissionDraft.topic,
+      sourceIds: array(submissionDraft.sourceIds),
       checkedSources: context.sources.length,
       drafter: object(draft.metadata)
     }
@@ -272,6 +276,53 @@ function normalizeDraftSourceIds(draft, context, maxSources) {
   };
 }
 
+function resolveTimelinePostTopic(draft, payload) {
+  draft = object(draft);
+  payload = object(payload);
+  const candidates = [
+    text(draft.topic),
+    text(payload.topic),
+    ...array(draft.abstracts),
+    topicFromBody(draft.body)
+  ];
+
+  for (const candidate of candidates) {
+    const topic = sanitizeTimelinePostTopic(candidate);
+    if (topic) return topic;
+  }
+  return '';
+}
+
+function sanitizeTimelinePostTopic(value) {
+  const topic = text(value)
+    .replace(/\s+/g, ' ')
+    .replace(/^["'`]+|["'`]+$/g, '')
+    .trim();
+  if (!topic || isPostInstructionTopic(topic)) return '';
+  return truncate(topic, 96);
+}
+
+function topicFromBody(value) {
+  const body = text(value).replace(/\s+/g, ' ');
+  if (!body) return '';
+  return body.split(/[.!?]\s+/)[0] || body;
+}
+
+function isPostInstructionTopic(value) {
+  const topic = comparablePostText(value);
+  if (!topic) return false;
+  if (/^(please )?(publish|post|create|write|draft|make|generate|add|send|share) (a |an |one |another |new |more )?(source backed |profile scribe |timeline )*(post|update)\b/.test(topic)) {
+    return true;
+  }
+  if (/^(please )?(publish|post|create|write|draft|make|generate|add|send|share)\b.*\b(profile scribe post|timeline post|post|update)\b/.test(topic)) {
+    return true;
+  }
+  if (/\b(one more|another|new|more)\b.*\b(profile scribe post|timeline post|post)\b/.test(topic)) {
+    return true;
+  }
+  return false;
+}
+
 function normalizeSourceIds(sourceIds, sources, maxSources) {
   const sourceList = arrayOfObjects(sources);
   const approvedIDs = sourceList
@@ -373,7 +424,12 @@ Return only JSON with keys: topic, body, abstracts, tone, sourceIds.`,
       user: JSON.stringify({
         task: 'Draft one source-backed ProfileScribe timeline post.',
         constraints: {
-          topic: 'short title, maximum 96 characters',
+          topic: 'specific public post headline, maximum 96 characters; describe the update itself, never the user request or posting action',
+          badTopics: [
+            'publish one more profile scribe post',
+            'create another post for my profile scribe',
+            'write a timeline post'
+          ],
           body: 'plain text, specific, professional, maximum 900 characters',
           abstracts: '1-3 short evidence summary lines',
           tone: 'short tone label',
